@@ -593,35 +593,130 @@ else if (typeof exports === 'object'){
   #sidebarProgress{
     display:none;
     position:fixed;
-    top:24px;
-    width:260px;
-    max-height: calc(100vh - 48px);
+    top:0;
+    bottom:0;
+    left:0;
+    width:320px;
+    height:100vh;
     overflow-y:auto;
     background: var(--bg-panel);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:14px;
+    border-right:1px solid var(--border);
+    padding:24px 18px;
     z-index: 10;
   }
   #sidebarProgress h3{
-    font-size:11px; text-transform:uppercase; letter-spacing:.6px;
-    color:var(--text-dim); margin:0 0 10px;
+    font-size:13px; text-transform:uppercase; letter-spacing:.6px;
+    color:var(--text-dim); margin:0 0 16px;
   }
-  #sidebarProgress .u-row{ cursor:pointer; border-radius:8px; padding:6px; margin:0 -6px; transition: background .12s; }
+  #sidebarProgress .u-row{ cursor:pointer; border-radius:10px; padding:12px 10px; margin:0 0 4px; transition: background .12s; }
   #sidebarProgress .u-row:hover{ background: var(--bg-panel-2); }
+  #sidebarProgress .u-ic{ font-size:22px; }
+  #sidebarProgress .u-name{ font-size:14px; }
+  #sidebarProgress .u-sub{ font-size:12px; }
   @media (min-width: 1500px){
-    #sidebarProgress{ display:block; left: calc(50% - 734px); }
+    #sidebarProgress{ display:block; }
+    .shell{ margin-left: calc(320px + (100vw - 320px - 900px) / 2); margin-right: auto; }
+    .bottomnav{ left: calc(320px + (100vw - 320px) / 2); }
   }
+
+  /* ---------- AUTH SCREEN ---------- */
+  #authScreen{
+    display:none;
+    position:fixed; inset:0; z-index:200;
+    background: var(--bg);
+    align-items:center; justify-content:center;
+    padding:24px;
+  }
+  #authScreen.show{ display:flex; }
+  .auth-card{
+    width:100%; max-width:360px;
+    background: var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:28px 24px;
+  }
+  .auth-logo{ text-align:center; font-size:26px; margin-bottom:4px; }
+  .auth-title{ text-align:center; font-size:15px; color:var(--text); margin-bottom:2px; font-weight:700; }
+  .auth-sub{ text-align:center; font-size:11px; color:var(--text-dim); margin-bottom:22px; }
+  .auth-tabs{ display:flex; background:var(--bg-inset); border-radius:10px; padding:3px; margin-bottom:18px; }
+  .auth-tab{
+    flex:1; text-align:center; padding:8px 0; font-size:11px; letter-spacing:.3px;
+    color:var(--text-dim); cursor:pointer; border-radius:8px; text-transform:uppercase;
+  }
+  .auth-tab.active{ background:var(--bg-panel-2); color:var(--green); }
+  .auth-field{ margin-bottom:12px; }
+  .auth-field label{ display:block; font-size:10px; color:var(--text-dim); margin-bottom:5px; text-transform:uppercase; letter-spacing:.4px; }
+  .auth-field input{
+    width:100%; background:var(--bg-inset); border:1px solid var(--border); border-radius:8px;
+    padding:10px 12px; color:var(--text); font-family:inherit; font-size:13px; outline:none;
+  }
+  .auth-field input:focus{ border-color: var(--green-dim); }
+  .auth-error{
+    display:none; background:rgba(255,95,86,.12); border:1px solid var(--red);
+    color:#FF8C85; font-size:11px; padding:8px 10px; border-radius:8px; margin-bottom:12px;
+  }
+  .auth-error.show{ display:block; }
+  .auth-submit{
+    width:100%; background: linear-gradient(160deg, var(--green), var(--green-dark));
+    color:#06110C; font-weight:700; border:none; border-radius:10px;
+    padding:12px 0; font-size:13px; cursor:pointer; letter-spacing:.3px;
+  }
+  .auth-submit:disabled{ opacity:.6; cursor:default; }
 </style>
 </head>
 <body>
+
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">🐘</div>
+    <div class="auth-title">PRENDE_SQL</div>
+    <div class="auth-sub">inicia sesión para guardar tu progreso</div>
+
+    <div class="auth-tabs">
+      <div class="auth-tab active" id="tabLogin">entrar</div>
+      <div class="auth-tab" id="tabRegister">crear cuenta</div>
+    </div>
+
+    <div class="auth-error" id="authError"></div>
+
+    <!-- LOGIN -->
+    <form id="loginForm">
+      <div class="auth-field">
+        <label>email</label>
+        <input type="email" id="loginEmail" required autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>contraseña</label>
+        <input type="password" id="loginPassword" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="auth-submit" id="loginSubmit">ENTRAR</button>
+    </form>
+
+    <!-- REGISTER -->
+    <form id="registerForm" style="display:none;">
+      <div class="auth-field">
+        <label>nombre de usuario</label>
+        <input type="text" id="regUsername" required minlength="3" maxlength="40" autocomplete="username">
+      </div>
+      <div class="auth-field">
+        <label>email</label>
+        <input type="email" id="regEmail" required autocomplete="email">
+      </div>
+      <div class="auth-field">
+        <label>contraseña</label>
+        <input type="password" id="regPassword" required minlength="6" autocomplete="new-password">
+      </div>
+      <button type="submit" class="auth-submit" id="registerSubmit">CREAR CUENTA</button>
+    </form>
+  </div>
+</div>
 
 <div id="sidebarProgress">
   <h3>Progreso del curso</h3>
   <div id="sidebarCursoList"></div>
 </div>
 
-<div class="shell" id="mainApp" style="display:flex;">
+<div class="shell" id="mainApp" style="display:none;">
 
   <div class="topbar">
     <button class="icon-btn" id="menuBtn" title="menú">☰</button>
@@ -714,6 +809,7 @@ else if (typeof exports === 'object'){
         <div class="eyebrow">certificados</div>
         <div id="certList"></div>
       </div>
+      <button class="hint-toggle" id="logoutBtn" style="width:100%; margin-top:24px;">🚪 cerrar sesión</button>
     </div>
   </div>
 
@@ -1108,9 +1204,61 @@ bindToggle('toggleUnlock', true, (v) => { devUnlock = v; unlockedUpTo = v ? 99 :
 bindToggle('toggleSound', false, () => {});
 bindToggle('toggleNotif', true, () => {});
 
-const LOCAL_PROGRESS_KEY = 'sqltrainer_local_progress';
+/* ================= API / AUTH ================= */
+// Cambia esto por la URL real de tu backend cuando lo despliegues
+// (ej: 'https://tu-backend.up.railway.app'). En local con uvicorn: 'http://localhost:8000'.
+const API_BASE_URL = 'http://localhost:8000';
+const TOKEN_KEY = 'psql_token';
+const LOCAL_PROGRESS_KEY = 'sqltrainer_local_progress'; // cache offline, no es la fuente de verdad
 
-function loadLocalProgress(){
+async function apiRequest(path, { method = 'GET', body, auth = true } = {}){
+  const headers = { 'Content-Type': 'application/json' };
+  if(auth){
+    const token = localStorage.getItem(TOKEN_KEY);
+    if(token) headers['Authorization'] = 'Bearer ' + token;
+  }
+  const res = await fetch(API_BASE_URL + path, {
+    method, headers, body: body ? JSON.stringify(body) : undefined
+  });
+  if(!res.ok){
+    let detail = 'Error de conexión con el servidor';
+    try{
+      const body = await res.json();
+      if(Array.isArray(body.detail)){
+        // Errores de validación de FastAPI/Pydantic: [{loc:[...], msg:"..."}]
+        detail = body.detail.map(d => d.msg || JSON.stringify(d)).join(' — ');
+      }else if(typeof body.detail === 'string'){
+        detail = body.detail;
+      }
+    }catch(e){}
+    throw new Error(detail);
+  }
+  return res.json();
+}
+
+function apiRegister(username, email, password){
+  return apiRequest('/auth/register', { method:'POST', auth:false, body:{ username, email, password } });
+}
+function apiLogin(email, password){
+  return apiRequest('/auth/login', { method:'POST', auth:false, body:{ email, password } });
+}
+function apiMe(){ return apiRequest('/auth/me'); }
+function apiGetProgress(){ return apiRequest('/progress'); }
+function apiPutProgress(){
+  return apiRequest('/progress', {
+    method:'PUT',
+    body: { xp, streak, completed_levels: Array.from(completedLevels) }
+  });
+}
+
+function cacheProgressLocally(){
+  try{
+    localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify({
+      xp, streak, completed: Array.from(completedLevels)
+    }));
+  }catch(e){ /* localStorage no disponible */ }
+}
+function loadCachedProgress(){
   try{
     const raw = localStorage.getItem(LOCAL_PROGRESS_KEY);
     if(raw){
@@ -1120,17 +1268,125 @@ function loadLocalProgress(){
       completedLevels = new Set(data.completed || []);
       return;
     }
-  }catch(e){ /* localStorage no disponible en este contexto */ }
+  }catch(e){ /* nada en cache */ }
   xp = 0; streak = 0; completedLevels = new Set();
 }
+
 function saveProgress(){
-  try{
-    localStorage.setItem(LOCAL_PROGRESS_KEY, JSON.stringify({
-      xp, streak, completed: Array.from(completedLevels)
-    }));
-  }catch(e){ /* localStorage no disponible en este contexto, el progreso sigue en memoria */ }
+  cacheProgressLocally(); // por si se pierde la conexión, no se pierde el progreso
+  apiPutProgress().catch(() => showToast('sin conexión — progreso guardado solo en local'));
 }
 
+/* ---- Pantalla de login/registro ---- */
+const authScreenEl = document.getElementById('authScreen');
+const authErrorEl = document.getElementById('authError');
+const tabLogin = document.getElementById('tabLogin');
+const tabRegister = document.getElementById('tabRegister');
+const loginForm = document.getElementById('loginForm');
+const registerForm = document.getElementById('registerForm');
+
+function showAuthError(msg){
+  authErrorEl.textContent = msg;
+  authErrorEl.classList.add('show');
+}
+function clearAuthError(){ authErrorEl.classList.remove('show'); }
+
+tabLogin.onclick = () => {
+  tabLogin.classList.add('active'); tabRegister.classList.remove('active');
+  loginForm.style.display = 'block'; registerForm.style.display = 'none';
+  clearAuthError();
+};
+tabRegister.onclick = () => {
+  tabRegister.classList.add('active'); tabLogin.classList.remove('active');
+  registerForm.style.display = 'block'; loginForm.style.display = 'none';
+  clearAuthError();
+};
+
+loginForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearAuthError();
+  const btn = document.getElementById('loginSubmit');
+  btn.disabled = true; btn.textContent = 'ENTRANDO…';
+  try{
+    const data = await apiLogin(
+      document.getElementById('loginEmail').value.trim(),
+      document.getElementById('loginPassword').value
+    );
+    await onAuthSuccess(data);
+  }catch(err){
+    showAuthError(err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = 'ENTRAR';
+  }
+});
+
+registerForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearAuthError();
+  const btn = document.getElementById('registerSubmit');
+  btn.disabled = true; btn.textContent = 'CREANDO…';
+  try{
+    const data = await apiRegister(
+      document.getElementById('regUsername').value.trim(),
+      document.getElementById('regEmail').value.trim(),
+      document.getElementById('regPassword').value
+    );
+    await onAuthSuccess(data);
+  }catch(err){
+    showAuthError(err.message);
+  }finally{
+    btn.disabled = false; btn.textContent = 'CREAR CUENTA';
+  }
+});
+
+async function onAuthSuccess(data){
+  localStorage.setItem(TOKEN_KEY, data.access_token);
+  currentUser = data.user;
+  try{
+    const p = await apiGetProgress();
+    xp = p.xp; streak = p.streak; completedLevels = new Set(p.completed_levels);
+    cacheProgressLocally();
+  }catch(e){
+    loadCachedProgress(); // si falla el fetch inicial, al menos usa lo último guardado en local
+  }
+  startApp();
+}
+
+function startApp(){
+  authScreenEl.classList.remove('show');
+  document.getElementById('mainApp').style.display = 'flex';
+  updateHUD();
+  renderPath();
+}
+
+function showAuthScreen(){
+  document.getElementById('mainApp').style.display = 'none';
+  authScreenEl.classList.add('show');
+}
+
+document.getElementById('logoutBtn').onclick = () => {
+  localStorage.removeItem(TOKEN_KEY);
+  currentUser = null;
+  xp = 0; streak = 0; completedLevels = new Set();
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginPassword').value = '';
+  showAuthScreen();
+};
+
+async function tryAutoLogin(){
+  const token = localStorage.getItem(TOKEN_KEY);
+  if(!token){ showAuthScreen(); return; }
+  try{
+    currentUser = await apiMe();
+    const p = await apiGetProgress();
+    xp = p.xp; streak = p.streak; completedLevels = new Set(p.completed_levels);
+    cacheProgressLocally();
+    startApp();
+  }catch(e){
+    localStorage.removeItem(TOKEN_KEY);
+    showAuthScreen();
+  }
+}
 
 document.getElementById('resetProgressBtn').onclick = () => {
   completedLevels = new Set();
@@ -1417,6 +1673,7 @@ function renderAsistente(){
 }
 
 function renderPerfil(){
+  document.getElementById('perfilUserName').textContent = currentUser ? currentUser.username : 'Tu progreso';
   document.getElementById('perfilXp').textContent = xp;
   document.getElementById('perfilStreak').textContent = streak;
   document.getElementById('perfilLvls').textContent = completedLevels.size + '/' + levels.length;
@@ -1885,10 +2142,7 @@ const WASM_DATA_URI = "data:application/wasm;base64,AGFzbQEAAAABnwRFYAJ/fwF/YAF/
 initSqlJs({ locateFile: () => WASM_DATA_URI }).then(sql => {
   SQL = sql;
   db = new SQL.Database();
-  document.getElementById('mainApp').style.display = 'flex';
-  loadLocalProgress();
-  updateHUD();
-  renderPath();
+  tryAutoLogin();
 }).catch(err => {
   document.getElementById('pathContainer').innerHTML = '<div class="placeholder">no se pudo cargar el motor SQL: ' + err + '</div>';
 });
